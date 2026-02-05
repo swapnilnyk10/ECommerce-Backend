@@ -1,14 +1,18 @@
 package com.ecommerce.order.service;
 
 import com.ecommerce.order.dto.OrderRequest;
+import com.ecommerce.order.dto.OrderResponse;
 import com.ecommerce.order.entity.Order;
 import com.ecommerce.order.entity.OrderItem;
 import com.ecommerce.order.repository.OrderRepository;
+import com.ecommerce.order.utils.OrderNotFoundException;
 import jakarta.transaction.Transactional;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,21 +21,23 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final OrderProducer orderProducer;
+    private final ModelMapper modelMapper;
 
-    public OrderService(OrderRepository orderRepository, OrderProducer orderProducer) {
+    public OrderService(OrderRepository orderRepository, OrderProducer orderProducer,ModelMapper modelMapper) {
         this.orderRepository = orderRepository;
         this.orderProducer = orderProducer;
+        this.modelMapper = modelMapper;
     }
 
     @Transactional
-    public Long createOrder(OrderRequest request) {
+    public Order createOrder(OrderRequest request) {
 
         Order order = new Order();
         order.setUserId(request.getUserId());
-        order.setStatus("CREATED");
+        order.setStatus("PROCESSING");
         order.setCreatedAt(Instant.now());
 
-        List<OrderItem> items = request.getItems().stream()
+        List<OrderItem>items = request.getItems().stream()
                 .map(req -> {
                     OrderItem item = new OrderItem();
                     item.setProductId(req.getProductId());
@@ -48,11 +54,28 @@ public class OrderService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         order.setTotalAmount(total);
-
+//
         Order saved = orderRepository.save(order);
 
         orderProducer.publishOrderCreated(saved);
 
-        return saved.getId();
+        return saved;
+    }
+
+    public OrderResponse getOrderById(Long orderId) {
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new OrderNotFoundException("Order not found with orderId : " + orderId));
+        return modelMapper.map(order, OrderResponse.class);
+
+    }
+
+    public List<OrderResponse> getAllOrder() {
+        List<Order> orders = orderRepository.findAll();
+        List<OrderResponse> orderResponses = new ArrayList<>();
+        for(Order order : orders) {
+            orderResponses.add(modelMapper.map(order, OrderResponse.class));
+        }
+        return orderResponses;
     }
 }
