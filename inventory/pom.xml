@@ -41,6 +41,12 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>2.5.0</version>
+        </dependency>
+
+                <dependency>
             <groupId>com.example.ecommerce</groupId>
             <artifactId>order</artifactId>
             <version>1.0.0</version>
@@ -61,6 +67,7 @@
         <!--			<artifactId>spring-boot-starter-web-test</artifactId>-->
         <!--			<scope>test</scope>-->
         <!--		</dependency>-->
+
     </dependencies>
 
     <build>

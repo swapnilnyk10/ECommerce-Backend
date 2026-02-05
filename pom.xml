@@ -14,6 +14,7 @@
         <module>payment</module>
         <module>inventory</module>
         <module>common</module>
+        <module>swagger-aggregator</module>
         <!-- you can add more like order-service, user-service later -->
     </modules>
 
@@ -65,6 +66,8 @@
             <version>3.2.6</version>
             <scope>compile</scope>
         </dependency>
+
+
     </dependencies>
 
     <build>

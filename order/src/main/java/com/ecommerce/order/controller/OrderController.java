@@ -18,7 +18,7 @@ public class OrderController {
         this.orderService = orderService;
     }
 
-    @PostMapping
+    @PostMapping("/add")
     public OrderResponse placeOrder(@RequestBody OrderRequest request) {
         Order orderCreated =  orderService.createOrder(request);
         return orderService.getOrderById(orderCreated.getId());
@@ -30,7 +30,7 @@ public class OrderController {
     }
 
 
-    @GetMapping
+    @GetMapping("/all")
     public List<OrderResponse> getAll() {
         return orderService.getAllOrder();
     }
