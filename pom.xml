@@ -12,6 +12,8 @@
     <modules>
         <module>order</module>
         <module>payment</module>
+        <module>inventory</module>
+        <module>common</module>
         <!-- you can add more like order-service, user-service later -->
     </modules>
 

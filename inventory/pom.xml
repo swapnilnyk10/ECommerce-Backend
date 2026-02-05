@@ -8,7 +8,7 @@
         <version>1.0.0</version>
     </parent>
 
-    <artifactId>payment</artifactId>
+    <artifactId>inventory</artifactId>
 
     <properties>
         <java.version>21</java.version>
@@ -42,7 +42,7 @@
         </dependency>
         <dependency>
             <groupId>com.example.ecommerce</groupId>
-            <artifactId>inventory</artifactId>
+            <artifactId>order</artifactId>
             <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>

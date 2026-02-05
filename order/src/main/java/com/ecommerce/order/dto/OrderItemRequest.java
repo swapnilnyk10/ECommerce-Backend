@@ -10,6 +10,12 @@ public class OrderItemRequest {
 
     public OrderItemRequest() {}
 
+    public OrderItemRequest(Long productId, Integer quantity, BigDecimal price) {
+        this.productId = productId;
+        this.quantity = quantity;
+        this.price = price;
+    }
+
     public Long getProductId() {
         return productId;
     }
@@ -34,3 +40,4 @@ public class OrderItemRequest {
         this.price = price;
     }
 }
+

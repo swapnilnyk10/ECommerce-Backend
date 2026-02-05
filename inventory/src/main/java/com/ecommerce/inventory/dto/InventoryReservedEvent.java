@@ -1,28 +1,25 @@
-package com.ecommerce.payment.dto;
+package com.ecommerce.inventory.dto;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.List;
 
-public class OrderCreatedEvent {
+public class InventoryReservedEvent {
 
-        private String eventId;
-        private Long orderId;
-        private Long userId;
-        private BigDecimal amount;
-        private List<Item> items;
-        private Instant timestamp;
+    private String eventId;
+    private Long orderId;
+    private Long userId;
+    private BigDecimal amount;
+    private Instant timestamp;
 
-    public OrderCreatedEvent(String eventId, Long orderId, Long userId, BigDecimal amount, List<Item> items, Instant timestamp) {
+    public InventoryReservedEvent() {}
+
+    public InventoryReservedEvent(String eventId, Long orderId, Long userId,
+                                  BigDecimal amount, Instant timestamp) {
         this.eventId = eventId;
         this.orderId = orderId;
         this.userId = userId;
         this.amount = amount;
-        this.items = items;
         this.timestamp = timestamp;
-    }
-
-    public OrderCreatedEvent() {
     }
 
     public String getEventId() {
@@ -55,14 +52,6 @@ public class OrderCreatedEvent {
 
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
-    }
-
-    public List<Item> getItems() {
-        return items;
-    }
-
-    public void setItems(List<Item> items) {
-        this.items = items;
     }
 
     public Instant getTimestamp() {

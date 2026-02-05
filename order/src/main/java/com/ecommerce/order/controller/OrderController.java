@@ -1,7 +1,6 @@
 package com.ecommerce.order.controller;
 
-import com.ecommerce.order.dto.CreateOrderRequest;
-import com.ecommerce.order.entity.Order;
+import com.ecommerce.order.dto.OrderRequest;
 import com.ecommerce.order.service.OrderService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,8 +9,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/orders")
+@RequestMapping("/api/orders")
 public class OrderController {
+
     private final OrderService orderService;
 
     public OrderController(OrderService orderService) {
@@ -19,7 +19,7 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<Order> createOrder(@RequestBody CreateOrderRequest request) {
-        return ResponseEntity.ok(orderService.placeOrder(request));
+    public ResponseEntity<Long> placeOrder(@RequestBody OrderRequest request) {
+        return ResponseEntity.ok(orderService.createOrder(request));
     }
 }

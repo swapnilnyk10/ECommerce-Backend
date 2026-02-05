@@ -1,76 +1,58 @@
 package com.ecommerce.order.service;
 
-import com.ecommerce.order.dto.CreateOrderRequest;
-import com.ecommerce.order.dto.Item;
-import com.ecommerce.order.dto.OrderCreatedEvent;
-import com.ecommerce.order.dto.OrderItemRequest;
+import com.ecommerce.order.dto.OrderRequest;
 import com.ecommerce.order.entity.Order;
 import com.ecommerce.order.entity.OrderItem;
-import com.ecommerce.order.repository.OrderItemRepository;
 import com.ecommerce.order.repository.OrderRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
-import java.util.List;
+
+import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.UUID;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
+
     private final OrderRepository orderRepository;
-    private final OrderItemRepository itemRepository;
-    private final OrderEventProducer producer;
+    private final OrderProducer orderProducer;
 
-    public OrderService(OrderRepository orderRepository, OrderItemRepository itemRepository, OrderEventProducer producer) {
+    public OrderService(OrderRepository orderRepository, OrderProducer orderProducer) {
         this.orderRepository = orderRepository;
-        this.itemRepository = itemRepository;
-        this.producer = producer;
-    }
-
-    private List<Item> mapItems(CreateOrderRequest request) {
-
-        List<Item> items = new ArrayList<>();
-
-        for (OrderItemRequest reqItem : request.getItems()) {
-            Item item = new Item();
-            item.setProductId(reqItem.getProductId());
-            item.setQuantity(reqItem.getQuantity());
-            items.add(item);
-        }
-
-        return items;
+        this.orderProducer = orderProducer;
     }
 
     @Transactional
-    public Order placeOrder(CreateOrderRequest request) {
+    public Long createOrder(OrderRequest request) {
 
         Order order = new Order();
         order.setUserId(request.getUserId());
         order.setStatus("CREATED");
-        order.setTotalAmount(request.getTotalAmount());
+        order.setCreatedAt(Instant.now());
 
-        Order savedOrder = orderRepository.save(order);
+        List<OrderItem> items = request.getItems().stream()
+                .map(req -> {
+                    OrderItem item = new OrderItem();
+                    item.setProductId(req.getProductId());
+                    item.setQuantity(req.getQuantity());
+                    item.setPrice(req.getPrice());
+                    item.setOrder(order);
+                    return item;
+                }).collect(Collectors.toList());
 
-        request.getItems().forEach(i -> {
-            OrderItem item = new OrderItem();
-            item.setOrderId(savedOrder.getId());
-            item.setProductId(i.getProductId());
-            item.setQuantity(i.getQuantity());
-            item.setPrice(i.getPrice());
-            itemRepository.save(item);
-        });
+        order.setItems(items);
 
-        OrderCreatedEvent event = new OrderCreatedEvent(
-                UUID.randomUUID().toString(),
-                savedOrder.getId(),
-                request.getUserId(),
-                request.getTotalAmount(),
-                mapItems(request),
-                Instant.now()
-        );
+        BigDecimal total = items.stream()
+                .map(i -> i.getPrice().multiply(BigDecimal.valueOf(i.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        producer.sendOrderCreatedEvent(event);
+        order.setTotalAmount(total);
 
-        return savedOrder;
+        Order saved = orderRepository.save(order);
+
+        orderProducer.publishOrderCreated(saved);
+
+        return saved.getId();
     }
 }

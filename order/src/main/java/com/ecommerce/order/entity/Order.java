@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.List;
 
 @Entity
 @Table(name = "orders")
@@ -19,17 +20,22 @@ public class Order {
 
     private BigDecimal totalAmount;
 
-    private Instant createdAt = Instant.now();
+    private Instant createdAt;
 
-    public Order() {
-    }
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    private List<OrderItem> items;
 
-    public Order(Long id, Long userId, String status, BigDecimal totalAmount, Instant createdAt) {
+    // No-args constructor
+    public Order() {}
 
+    // All-args constructor
+    public Order(Long id, Long userId, String status, BigDecimal totalAmount, Instant createdAt, List<OrderItem> items) {
+        this.id = id;
         this.userId = userId;
         this.status = status;
         this.totalAmount = totalAmount;
-
+        this.createdAt = createdAt;
+        this.items = items;
     }
 
     public Long getId() {
@@ -70,5 +76,13 @@ public class Order {
 
     public void setCreatedAt(Instant createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public List<OrderItem> getItems() {
+        return items;
+    }
+
+    public void setItems(List<OrderItem> items) {
+        this.items = items;
     }
 }
