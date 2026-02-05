@@ -16,7 +16,7 @@ public class InventoryController {
 
     private final InventoryService inventoryService;
 
-    @PostMapping
+    @PostMapping("add")
     public Inventory addInventory(@RequestBody Inventory request) {
         Inventory inventory =  inventoryService.createOrUpdateInventory(request);
         return inventoryService.getInventoryById(inventory.getProductId());
@@ -27,7 +27,7 @@ public class InventoryController {
         return inventoryService.getInventoryById(productId);
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public List<Inventory> getAll() {
         return inventoryService.getAllInventory();
     }
