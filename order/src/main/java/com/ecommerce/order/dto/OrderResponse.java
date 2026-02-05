@@ -1,17 +1,13 @@
-package com.ecommerce.order.entity;
+package com.ecommerce.order.dto;
 
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.OneToMany;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 
-@Entity
-@Table(name = "orders")
-public class Order {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class OrderResponse {
     private Long id;
 
     private Long userId;
@@ -23,13 +19,13 @@ public class Order {
     private Instant createdAt;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-    private List<OrderItem> items;
+    private List<Item> items;
 
     // No-args constructor
-    public Order() {}
+    public OrderResponse() {}
 
     // All-args constructor
-    public Order(Long id, Long userId, String status, BigDecimal totalAmount, Instant createdAt, List<OrderItem> items) {
+    public OrderResponse(Long id, Long userId, String status, BigDecimal totalAmount, Instant createdAt, List<Item> items) {
         this.id = id;
         this.userId = userId;
         this.status = status;
@@ -78,11 +74,11 @@ public class Order {
         this.createdAt = createdAt;
     }
 
-    public List<OrderItem> getItems() {
+    public List<Item> getItems() {
         return items;
     }
 
-    public void setItems(List<OrderItem> items) {
+    public void setItems(List<Item> items) {
         this.items = items;
     }
 }

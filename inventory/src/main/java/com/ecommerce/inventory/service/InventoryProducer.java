@@ -29,4 +29,5 @@ public class InventoryProducer {
                 new InventoryFailedEvent(UUID.randomUUID().toString(), orderId, reason, Instant.now());
         kafkaTemplate.send("inventory.failed", event);
     }
+
 }
