@@ -1,14 +1,18 @@
 package com.ecommerce.order.dto;
 
-import java.math.BigDecimal;
 import java.util.List;
 
-public class CreateOrderRequest {
+public class OrderRequest {
+
     private Long userId;
-    private BigDecimal totalAmount;
     private List<OrderItemRequest> items;
 
-    public CreateOrderRequest() {}
+    public OrderRequest() {}
+
+    public OrderRequest(Long userId, List<OrderItemRequest> items) {
+        this.userId = userId;
+        this.items = items;
+    }
 
     public Long getUserId() {
         return userId;
@@ -16,14 +20,6 @@ public class CreateOrderRequest {
 
     public void setUserId(Long userId) {
         this.userId = userId;
-    }
-
-    public BigDecimal getTotalAmount() {
-        return totalAmount;
-    }
-
-    public void setTotalAmount(BigDecimal totalAmount) {
-        this.totalAmount = totalAmount;
     }
 
     public List<OrderItemRequest> getItems() {

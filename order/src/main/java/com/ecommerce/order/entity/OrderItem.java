@@ -12,23 +12,24 @@ public class OrderItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long orderId;
-
     private Long productId;
 
     private Integer quantity;
 
     private BigDecimal price;
 
-    public OrderItem() {
-    }
+    @ManyToOne
+    @JoinColumn(name = "order_id")
+    private Order order;
 
-    public OrderItem(Long id, Long orderId, Long productId, Integer quantity, BigDecimal price) {
+    public OrderItem() {}
+
+    public OrderItem(Long id, Long productId, Integer quantity, BigDecimal price, Order order) {
         this.id = id;
-        this.orderId = orderId;
         this.productId = productId;
         this.quantity = quantity;
         this.price = price;
+        this.order = order;
     }
 
     public Long getId() {
@@ -37,14 +38,6 @@ public class OrderItem {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Long getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(Long orderId) {
-        this.orderId = orderId;
     }
 
     public Long getProductId() {
@@ -69,5 +62,13 @@ public class OrderItem {
 
     public void setPrice(BigDecimal price) {
         this.price = price;
+    }
+
+    public Order getOrder() {
+        return order;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
     }
 }
